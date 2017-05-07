@@ -18,20 +18,26 @@ pip install docker-compose==1.10.0
 sudo usermod -aG docker ${USER}
 ```
 
-3. Set max_map_count value (Linux)
-
-```
-sudo sysctl -w vm.max_map_count=262144
-```
-
-4. Set app and run
+3. Clone and build i-crawler app
 
 ```
 git clone git@github.com:jarekswierek/i-crawler.git
 cd i-crawler
 docker-compose build
+```
+
+4. Set max_map_count value (Linux)
+
+```
+sudo sysctl -w vm.max_map_count=262144
+```
+
+5. Run i-crawler app and ElasticSearch
+
+```
 docker-compose up
 ```
 
 Application will be available on **localhost:8000**
+
 ElasticSearch will be available on **localhost:9200**
