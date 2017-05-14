@@ -1,6 +1,7 @@
 # I-Crawler
 
 App for crawling Instagram by API and saving results in Elasticsearch. App also allow for searching photos in collected media by tag.
+
 -----------
 
 # Setup
