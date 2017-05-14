@@ -1,43 +1,48 @@
-# i-crawler
+# I-Crawler
 
+App for crawling Instagram by API and saving results in Elasticsearch. App also allow for searching photos in collected media by tag.
 -----------
 
 # Setup
 
-1. Install Docker and docker-compose using bellow docker docs source
-
-https://docs.docker.com/engine/installation/linux/ubuntu/#install-using-the-repository
-
-```
-pip install docker-compose==1.10.0
-```
-
-2. Add docker to group
-
-```
-sudo usermod -aG docker ${USER}
-```
-
-3. Clone and build i-crawler app
+1. Clone app
 
 ```
 git clone git@github.com:jarekswierek/i-crawler.git
+```
+
+2. Install requirements on virtualenv with python3
+
+```
+virtualenv -p python3 ENV
+source ./ENV/bin/activate
 cd i-crawler
-docker-compose build
+pip install -r requirements.txt
 ```
 
-4. Set max_map_count value (Linux)
+3. Add api_keys.json file to i-crawler dir
 
 ```
-sudo sysctl -w vm.max_map_count=262144
+{
+    "user_id": "<INSTAGRAM_USER_ID>",
+    "token": "<INSTAGRAM_USER_TOKEN>"
+}
 ```
 
-5. Run i-crawler app and ElasticSearch
+4. Install, configure and run elasticsearch in other terminal tab (use tutorial)
 
 ```
-docker-compose up
+https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-elasticsearch-on-ubuntu-14-04
 ```
 
-Application will be available on **localhost:8000**
+5. Start crawling (recommended in other terminal tab)
 
-ElasticSearch will be available on **localhost:9200**
+```
+python3 manage.py run_crawler
+```
+
+6. Run web app (localhost:8000)
+
+```
+python3 manage.py runserver
+```
