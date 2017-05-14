@@ -6,11 +6,18 @@
 </head>
 <body>
 
-    <form action="/" method="post">
-        {% csrf_token %}
-        {{ form }}
-        <input type="submit" value="Search" />
+    <form method="get">
+        <input type="text" name="q">
+        <input type="submit" value="Search">
     </form>
+    <hr>
+
+    {% if result %}
+        {% for res in result %}
+            <img src="{{ res }}" />
+            <p>#{{ tag }}</p>
+        {% endfor %}
+    {% endif %}
 
 </body>
 </html>

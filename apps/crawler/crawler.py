@@ -9,6 +9,8 @@ from . import elasticsearch
 
 
 class Crawler(object):
+    """Class for collecting photos from Instagram.
+    """
     recent_media_url = '/'.join([
         settings.INSTAGRAM_API_URL,
         'users/{user_id}/media/recent/?access_token={token}'
@@ -25,7 +27,7 @@ class Crawler(object):
     def __init__(self, *args, **kwargs):
         super(Crawler, self).__init__(*args, **kwargs)
         with open(settings.INSTAGRAM_KEYS) as data_file:
-            keys = json.load(data_file)
+            keys = json.loads(str(data_file.read()))
         self.token = keys['token']
         self.user = keys['user_id']
         self.checked_users = set()
@@ -33,6 +35,8 @@ class Crawler(object):
         self.elasticsearch = elasticsearch.Elasticsearch()
 
     def run(self):
+        """Start collecting media from Instagram.
+        """
         self.users_for_check.add(self.user)
         iterate = True
         while iterate is True:
@@ -40,14 +44,13 @@ class Crawler(object):
             recent_media = self.get_recent_media(user_id)
             self.checked_users.add(user_id)
             for media in recent_media['data']:
+                media_id = media['id']
                 media_url = media['images']['standard_resolution']['url']
                 media_tags = media['tags']
-                print(media_url)
-                print(media_tags)
-                print('----------------------')
 
-                # TODO - add saving to elasticsearch
-                # self.elasticsearch.create_media(media_url, media_tags)
+                # save photo
+                self.elasticsearch.create_media(media_id, media_url, media_tags)
+                print('Saved photo:{url}'.format(url=media_url))
 
                 comments = self.get_comments_by_media_id(media['id'])
                 likes = self.get_likes_by_media_id(media['id'])
@@ -67,7 +70,7 @@ class Crawler(object):
         """
         url = self.recent_media_url.format(user_id=user_id, token=self.token)
         resp = requests.get(url)
-        content = json.loads(resp.content)
+        content = json.loads(str(resp.content.decode('utf-8')))
         return content
 
     def get_likes_by_media_id(self, media_id):
@@ -75,7 +78,7 @@ class Crawler(object):
         """
         url = self.likes_url.format(media_id=media_id, token=self.token)
         resp = requests.get(url)
-        content = json.loads(resp.content)
+        content = json.loads(str(resp.content.decode('utf-8')))
         return content
 
     def get_comments_by_media_id(self, media_id):
@@ -83,5 +86,5 @@ class Crawler(object):
         """
         url = self.comments_url.format(media_id=media_id, token=self.token)
         resp = requests.get(url)
-        content = json.loads(resp.content)
+        content = json.loads(str(resp.content.decode('utf-8')))
         return content

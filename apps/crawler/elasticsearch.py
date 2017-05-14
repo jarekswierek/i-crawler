@@ -5,8 +5,8 @@ import elasticsearch
 class Elasticsearch(object):
     es = elasticsearch.Elasticsearch()
 
-    def create_media(self, image_url, tags):
-        self.es.index(index='media', doc_type='photos', body={
+    def create_media(self, media_id, image_url, tags):
+        self.es.index(index='media', doc_type='photos', id=media_id, body={
             'image_url': image_url,
             'tags': tags
         })
@@ -15,3 +15,6 @@ class Elasticsearch(object):
         query = 'tags:"{tag}"'.format(tag=tag)
         result = self.es.search(index='media', q=query)
         return result
+
+    def delete_media(self, media_id):
+        self.es.delete(index='media', doc_type='photos', id=media_id)
